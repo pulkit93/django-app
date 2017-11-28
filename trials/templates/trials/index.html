@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+{% load static %}
+
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'trials/style.css' %}" />
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+</head>
+<body>
+<h1 style="color: #428bca;"><a href="{% url 'trials:index' %}"> {% widthratio paginator.num_pages|add:"-1" 1 25 %} Clinical Studies</a></h1>
+
+
+<form id="searchform" action="{% url 'trials:index' %}" method="get" accept-charset="utf-8">
+      <input class="searchfield" id="searchbox" name="q" type="text" placeholder="Search">
+      <button class="searchbutton" type="submit">
+        <i class="fa fa-search">Submit</i>
+      </button>
+    </form>
+{% if latest_trials_list %}
+{% if is_paginated %}
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+    {% for i in paginator.page_range %}
+      {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+      {% elif i > page_obj.number|add:'-4' and i < page_obj.number|add:'4' %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+      <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+  </ul>
+{% endif %}
+    <table class="table table-bordered">
+    {% for trial in latest_trials_list %}
+        <tbody><tr><td><a href="{% url 'trials:detail' trial.id %}">{{ trial.brief_title }}</a></td></tr></tbody>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No trials are available.</p>
+{% endif %}
+</body>
+</html>
